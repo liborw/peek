@@ -56,8 +56,8 @@ EOF
 
 long_peek() {
 cat<<EOF
-${bold}$NAME${normal} (${DIR/$HOME/~}) [$VCS]
-    $SHORTDESC
+${bold}$NAME${normal}: $SHORTDESC (${DIR/$HOME/~}) [$VCS]
+    $LONGDESC
 EOF
 }
 
@@ -74,14 +74,15 @@ do
     else
         NAME=${HEADER%:*}
         SHORTDESC=${HEADER#*: *}
+        LONGDESC=`grep -m 1 "^[A-Za-z]" $DIR/$README`
     fi
     VCS=`$BIN/peek-vcs.sh $DIR`
 
-    if $LONG
+    if [ $LONG -eq 1 ]
     then
-        short_peek
-    else
         long_peek
+    else
+        short_peek
     fi
 done
 
