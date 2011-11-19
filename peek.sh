@@ -6,6 +6,7 @@ SOURCE="${BASH_SOURCE[0]}"
 while [ -h "$SOURCE" ] ; do SOURCE="$(readlink "$SOURCE")"; done
 BIN="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
 
+# Usage message
 usage() {
 cat<<EOF
 Usage: `basename $0` [options]
@@ -14,16 +15,18 @@ This script displays summary of a project.
 
 Options:
 
-    -h --help  Show this message
+    -h --help   Show this message
+    -l --long   Force long output
 
 EOF
 }
 
+# Parse cammand line arguments
 while getopts ":hl" opt
 do  case "$opt" in
         h)  usage
             exit 0;;
-        l)  LONG=true
+        l)  LONG=1
             ;;
         ?)  usage
             exit 1;;
@@ -35,6 +38,9 @@ shift $(($OPTIND -1))
 if [ -n ""$1"" ]
 then
     DIRS="$@"
+    if [ $# -eq 1 ]; then
+        LONG=1
+    fi
 else
     DIRS=`ls -d */`
 fi
@@ -44,16 +50,17 @@ normal=`tput sgr0`
 
 short_peek() {
 cat<<EOF
-${bold}$NAME${normal}: $DESC (${DIR/$HOME/~}) [$VCS]
+${bold}$NAME${normal}: $SHORTDESC (${DIR/$HOME/~}) [$VCS]
 EOF
 }
 
 long_peek() {
 cat<<EOF
-${bold}$NAME${normal} (${DIR/$HOME/~})
-    $DESC
+${bold}$NAME${normal} (${DIR/$HOME/~}) [$VCS]
+    $SHORTDESC
 EOF
 }
+
 
 for dir in $DIRS
 do
@@ -63,10 +70,10 @@ do
     if [ -z "$HEADER" ]
     then
         NAME=`basename $DIR`
-        DESC=""
+        SHORTDESC=""
     else
         NAME=${HEADER%:*}
-        DESC=${HEADER#*: *}
+        SHORTDESC=${HEADER#*: *}
     fi
     VCS=`$BIN/peek-vcs.sh $DIR`
 
