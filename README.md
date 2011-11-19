@@ -1,4 +1,4 @@
-# psum: Project Summary on the Command-Line
+# peek: Peek into project
 
 # Features
 
