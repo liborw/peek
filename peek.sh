@@ -13,13 +13,15 @@ Options:
 EOF
 }
 
-while getopts ":h" opt
-do      case "$opt" in
-        h)      usage
-                exit 0;;
-        ?)      usage
-                exit 1;;
-        esac
+while getopts ":hl" opt
+do  case "$opt" in
+        h)  usage
+            exit 0;;
+        l)  LONG=true
+            ;;
+        ?)  usage
+            exit 1;;
+    esac
 done
 
 shift $(($OPTIND -1))
@@ -31,14 +33,35 @@ else
     DIRS=`ls -d */`
 fi
 
-
 bold=`tput bold`
 normal=`tput sgr0`
 
+short_peek() {
+cat<<EOF
+${bold}$NAME${normal} (${DIR/$HOME/~})
+    $DESC
+EOF
+}
+
+long_peek() {
+cat<<EOF
+${bold}$NAME${normal} (${DIR/$HOME/~})
+    $DESC
+EOF
+}
+
 for dir in $DIRS
 do
-    echo "${bold}${dir%/}:${normal}"
-
-    head -n 3 "${dir}README.md"
+    DIR=`cd $dir; pwd`
+    README=`ls $DIR | grep -i -m 1 "readme.*"`
+    HEADER=`grep -m 1 "^# .*:" $DIR/$README`; HEADER=${HEADER#\# }
+    NAME=${HEADER%:*}
+    DESC=${HEADER#*:}
+    if $LONG
+    then
+        short_peek
+    else
+        long_peek
+    fi
 done
 
