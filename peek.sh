@@ -1,5 +1,11 @@
 #!/bin/bash
 
+
+# Get path of this script
+SOURCE="${BASH_SOURCE[0]}"
+while [ -h "$SOURCE" ] ; do SOURCE="$(readlink "$SOURCE")"; done
+BIN="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
+
 usage() {
 cat<<EOF
 Usage: `basename $0` [options]
@@ -38,8 +44,7 @@ normal=`tput sgr0`
 
 short_peek() {
 cat<<EOF
-${bold}$NAME${normal} (${DIR/$HOME/~})
-    $DESC
+${bold}$NAME${normal}: $DESC (${DIR/$HOME/~}) [$VCS]
 EOF
 }
 
@@ -55,8 +60,16 @@ do
     DIR=`cd $dir; pwd`
     README=`ls $DIR | grep -i -m 1 "readme.*"`
     HEADER=`grep -m 1 "^# .*:" $DIR/$README`; HEADER=${HEADER#\# }
-    NAME=${HEADER%:*}
-    DESC=${HEADER#*:}
+    if [ -z "$HEADER" ]
+    then
+        NAME=`basename $DIR`
+        DESC=""
+    else
+        NAME=${HEADER%:*}
+        DESC=${HEADER#*: *}
+    fi
+    VCS=`$BIN/peek-vcs.sh $DIR`
+
     if $LONG
     then
         short_peek

@@ -1,15 +1,14 @@
 #!/bin/bash
 
+# This script detect mayor version control systems.
+
 # Parse user input
-if [ -n $@ ]
+if [ -z $@ ]
 then
     DIR=`pwd`
 else
-    DIR=$1
+    DIR=${1%/}
 fi
-
-# Remove the last slash
-DIR=${DIR%/}
 
 # Detect version control system
 if [ -e "$DIR/.bzr" ]; then
