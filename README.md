@@ -1,12 +1,18 @@
-# psum: Project Summary on the Command-Line
+# peek: Peek into project
+
+Have you ever wonder what project is hidden under a fancy directory name.
+
+	$ peek peek
+	peek: Peek into project (~/Repos/peek) [git]
+    	Have you ever wonder what project is hidden under a fancy directory name.
 
 # Features
 
-* Nothing there yet.
+* Display project name and show description
+* Display version control system (git, bzr, hg)
+* One or multiple directories
 
 # Planed Features
 
-* Show README
-* Accept multiple directories
 * Support for Git (hg, bazaar, etc.)
 * Search
