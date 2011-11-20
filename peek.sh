@@ -21,6 +21,9 @@ Options:
 EOF
 }
 
+# Default options
+LONG=0
+
 # Parse cammand line arguments
 while getopts ":hl" opt
 do  case "$opt" in
